@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
     name: 'random',
@@ -12,7 +12,7 @@ module.exports = {
             let max = args[0]
             let randNo = Math.floor(Math.random() * max + 1)
             if (isNaN(max)) return message.channel.send('Phải là số cơ, bựa quá')
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('RED')
                 .setDescription(`🎲 Số random của bạn: \**${randNo}\**`);
             message.channel.send({ embeds: [embed] })

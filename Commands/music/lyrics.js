@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 module.exports = {
     name: 'lyrics',
@@ -12,7 +12,7 @@ module.exports = {
         let body = await fetch (`https://api.popcat.xyz/lyrics?song=${encodeURIComponent(args.join(' '))}`)
         const data = await body.json()
         if (!data) return message.channel.send('Lỗi vui lòng thử lại sau');
-            let lEmbed = new MessageEmbed()
+            let lEmbed = new EmbedBuilder()
                 .setColor('GREEN')
                 .setAuthor({name: `📻 Lyrics: ${data.title}`})
                 .setTitle(`**Title**: ${data.title}\n**Author**: ${data.artist}`)

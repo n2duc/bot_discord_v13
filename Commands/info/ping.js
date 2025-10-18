@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
     name: 'ping',
@@ -14,7 +14,7 @@ module.exports = {
         let minutes = Math.floor(uptime / 60000) % 60
         let seconds = Math.floor(uptime / 1000) % 60
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Thông tin khác của \`${client.user.username}\``)
             .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
             .setColor('BLURPLE')

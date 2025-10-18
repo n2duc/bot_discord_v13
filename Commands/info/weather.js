@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const weather = require('weather-js')
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
 
             let current = result[0].current;
             let location = result[0].location
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#b9fbc0')
                 .setAuthor({ name: `Thời tiết ở ${current.observationpoint} ngày hôm nay`, iconURL: current.imageUrl })
                 .setThumbnail(current.imageUrl)

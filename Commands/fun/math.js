@@ -1,5 +1,5 @@
 const math = require('mathjs')
-const { MessageEmbed } = require("discord.js")
+const { EmbedBuilder } = require("discord.js")
 
 module.exports = {
     name: "math",
@@ -14,7 +14,7 @@ module.exports = {
         } catch (e) {
             return message.channel.send("Mình không giải được :(")
         }
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(0xffffff)
             .setTitle('Math Calculation')
             .addFields(

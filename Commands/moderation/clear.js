@@ -1,3 +1,5 @@
+const { PermissionsBitField } = require('discord.js');
+
 module.exports = {
     name: 'clear',
     description: 'Xóa số lượng tin nhắn',
@@ -8,12 +10,16 @@ module.exports = {
     run: async(client, message, args) => {
         await message.delete();
 
-        if (!message.member.permissions.has("MANAGE_MESSAGES")) {
-            return message.reply("Bạn không có quyền MANAGE_MESSAGES").then(m => m.delete({timeout: 5000}));
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            const reply = await message.reply("Bạn không có quyền MANAGE_MESSAGES");
+            setTimeout(() => reply.delete().catch(() => {}), 5000);
+            return;
         }
 
-        if (!message.guild.me.permissions.has("MANAGE_MESSAGES")) {
-            return message.reply("Bot không có quyền MANAGE_MESSAGES nên bot không thể xoá.").then(m => m.delete({timeout: 5000}));
+        if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            const reply = await message.reply("Bot không có quyền MANAGE_MESSAGES nên bot không thể xoá.");
+            setTimeout(() => reply.delete().catch(() => {}), 5000);
+            return;
         }
 
         const user = message.mentions.users.first()
@@ -23,18 +29,23 @@ module.exports = {
         if (ammount > 100) return message.reply('Vui lòng nhập số nhỏ hơn 100.')
         if (!ammount && !user) return message.channel.send(`Sử dụng lệnh help clear\` để biết thêm thông tin.`)
         if (!user) {
-            message.channel.bulkDelete(ammount, true).then(delmsg => {
-                message.channel.send(`Đã xoá \`${delmsg.size}\` tin nhắn!`).then(m => m.delete({timeout: 5000}))
-            })
+            const delmsg = await message.channel.bulkDelete(ammount, true);
+            const info = await message.channel.send(`Đã xoá \`${delmsg.size}\` tin nhắn!`);
+            setTimeout(() => info.delete().catch(() => {}), 5000);
         } else {
-            message.channel.messages.fetch({
+            const messages = await message.channel.messages.fetch({
                 limit: 100,
-            }).then(messages => {
-                messages = messages.filter(m => m.author.id === user.id).array().slice(0, ammount)
-                message.channel.bulkDelete(messages, true).then(delmsg => {
-                    message.channel.send(`Đã xoá \`${delmsg.size}\` tin nhắn!`).then(m => m.delete({timeout: 5000}))
-                })
-            }) 
+            });
+            const raw = messages.filter(m => m.author.id === user.id).first(ammount);
+            const toDelete = Array.isArray(raw) ? raw : raw ? [raw] : [];
+            if (!toDelete.length) {
+                const info = await message.channel.send('Không tìm thấy tin nhắn nào để xoá.');
+                setTimeout(() => info.delete().catch(() => {}), 5000);
+                return;
+            }
+            const deleted = await message.channel.bulkDelete(toDelete, true);
+            const info = await message.channel.send(`Đã xoá \`${deleted.size}\` tin nhắn!`);
+            setTimeout(() => info.delete().catch(() => {}), 5000);
         }
     },
 };

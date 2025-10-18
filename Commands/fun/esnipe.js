@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
     name: 'esnipe',
@@ -15,7 +15,7 @@ module.exports = {
             message.reply(`Có ${snipes.length} để snipe.`)
         }
         const { newc, msg } = target
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({ name: `Người gửi:${msg.author.tag}`, iconURL: msg.author.avatarURL({ dynamic: true }) })
             .setColor('GREEN')
             .addFields(

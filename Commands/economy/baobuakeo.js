@@ -1,4 +1,4 @@
-const { Client, Message, MessageEmbed } = require('discord.js');
+const { Client, Message, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'buakeobao',
@@ -53,7 +53,7 @@ module.exports = {
             client.bank(message.author.id, coins)
         }
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
 
         
         embed.setAuthor({name: 'Chơi Búa/Kéo/Bao với Bot',iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 let stringSimilarity = require('string-similarity')
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
         }
         const permissions = role.permissions.toArray().map((p) => `\`${p}\``).join(' ')
         let membersWithRole = message.guild.roles.cache.get(role.id).members
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(role.color)
             .setTitle("Thông tin về Role")
             .addFields(
