@@ -1,4 +1,4 @@
-const { MessageEmbed, Util } = require('discord.js')
+const { EmbedBuilder, parseEmoji } = require('discord.js')
 const { parse } = require("twemoji-parser")
 
 module.exports = {
@@ -11,9 +11,9 @@ module.exports = {
         const emoji = args[0]
         if(!emoji) return message.channel.send("Nhập emoji !!")
 
-        let custom = Util.parseEmoji(emoji)
+        let custom = parseEmoji(emoji)
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Phiên bản phóng to của Emoji: ${emoji}`)
             .setColor("AQUA")
 

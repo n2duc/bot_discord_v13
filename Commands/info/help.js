@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const fs = require("fs");
 
 require('dotenv').config();
@@ -33,7 +33,7 @@ module.exports = {
                         categories.push(data);
                     });
 
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setAuthor({ name: `Danh sách lệnh của ${client.user.username}`, iconURL: message.guild.iconURL({ dynamic: true }) })
                         .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
                         .setDescription(`Sử dụng \`${prefix}help {lệnh}\` để xem thêm thông tin về lệnh.
@@ -49,13 +49,13 @@ module.exports = {
                         client.commands.get(args[0].toLowerCase()) || client.commands.find(c => c.aliases && c.aliases.includes(args[0].toLowerCase()));
 
                     if (!command) {
-                        const embed = new MessageEmbed()
+                        const embed = new EmbedBuilder()
                             .setDescription(`Lệnh không hợp lệ! Sử dụng \`${prefix}help\` để xemn tất cả các lệnh!`)
                             .setColor('GREEN');
                         return message.channel.send({ embeds: [embed] });
                     }
 
-                    const embed = new MessageEmbed()
+                    const embed = new EmbedBuilder()
                         .setTitle('Thông tin của lệnh: ')
                         .addFields(
                             {name: 'Lệnh', value: command.name ? `\`${command.name}\`` : 'Không có tên cho lệnh này.'},

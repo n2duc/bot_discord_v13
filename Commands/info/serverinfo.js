@@ -1,4 +1,4 @@
-const { Discord, MessageEmbed, Sticker } = require('discord.js');
+const { EmbedBuilder, ChannelType } = require('discord.js');
 const moment = require('moment')
 
 module.exports = {
@@ -15,9 +15,9 @@ module.exports = {
       
 
     const channels = message.guild.channels.cache;
-    message.guild.owner = await message.guild.fetchOwner().then(m => m.user).catch(() => { })
+    const owner = await message.guild.fetchOwner().then(m => m.user).catch(() => null)
     let guild = message.guild;
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setAuthor({ name: `Thông tin server: ${message.guild.name}`, iconURL: message.guild.iconURL()})
       .setThumbnail(message.guild.iconURL())
       .setColor(`#48cae4`)
@@ -27,9 +27,9 @@ module.exports = {
           value: `**${message.guild.name}**`,
           inline: true
         },
-        {
+        { 
           name: `👑 **Owner**`,
-          value: `${message.guild.owner}\n\`${message.guild.owner.tag}\``,
+          value: owner ? `${owner}\n\`${owner.tag}\`` : "Không xác định",
           inline: true
         },
         {
@@ -51,7 +51,7 @@ module.exports = {
         },
         {
           name: `🖥 **Channels**`,
-          value: `Tổng: **${channels.size}** (**${channels.filter(channel => channel.type === 'GUILD_TEXT').size}** text | **${channels.filter(channel => channel.type === 'GUILD_VOICE').size}** voice)`,
+          value: `Tổng: **${channels.size}** (**${channels.filter(channel => channel.type === ChannelType.GuildText).size}** text | **${channels.filter(channel => channel.type === ChannelType.GuildVoice).size}** voice)`,
           inline: true
         },
         )
@@ -81,8 +81,8 @@ module.exports = {
           inline: true
         },
         {
-          name: `🌎 **Region**`,
-          value: `**${message.guild.region}** `,
+          name: `🌎 **Locale**`,
+          value: `**${message.guild.preferredLocale}** `,
           inline: true
         },
         {
@@ -96,7 +96,7 @@ module.exports = {
 
         } catch (e) {
         console.log(String(e.stack).bgRed)
-        return message.reply({embeds: [new MessageEmbed()
+        return message.reply({embeds: [new EmbedBuilder()
             .setColor("RED")
             .setTitle(`❌ ERROR`)
             .setDescription(`\`\`\`${e.message ? String(e.message).substr(0, 2000) : String(e).substr(0, 2000)}\`\`\``)

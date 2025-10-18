@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } = require('discord.js');
 
 module.exports = {
   name: "userinfo",
@@ -30,8 +30,8 @@ module.exports = {
     };
 
     async function getUserBannerUrl(userId) {
-      const user = await client.api.users(userId).get();
-      return user.banner ? `https://cdn.discordapp.com/banners/${userId}/${user.banner}.${user.banner.startsWith("a_") ? "gif" : "png"}?size=4096` : null;
+      const fetchedUser = await client.users.fetch(userId, { force: true });
+      return fetchedUser.banner ? fetchedUser.bannerURL({ size: 4096 }) : null;
   }
   
       let mentionedUser = message.mentions.users.first() || message.guild.members.cache.get(args[0]) || message.author;
@@ -67,43 +67,43 @@ module.exports = {
     const UserBadges = UserFlags ? `**Danh hiệu:** ${UserFlags}` : "\n";
         var permissions = [];
 
-    if(user.permissions.has("KICK_MEMBERS")){
+    if(user.permissions.has(PermissionsBitField.Flags.KickMembers)){
      permissions.push("Kick Members");
  }
- 
- if(user.permissions.has("BAN_MEMBERS")){
+
+ if(user.permissions.has(PermissionsBitField.Flags.BanMembers)){
      permissions.push("Ban Members");
  }
- 
- if(user.permissions.has("ADMINISTRATOR")){
+
+ if(user.permissions.has(PermissionsBitField.Flags.Administrator)){
      permissions.push("Administrator");
  }
 
- if(user.permissions.has("MANAGE_MESSAGES")){
+ if(user.permissions.has(PermissionsBitField.Flags.ManageMessages)){
      permissions.push("Manage Messages");
  }
- 
- if(user.permissions.has("MANAGE_CHANNELS")){
+
+ if(user.permissions.has(PermissionsBitField.Flags.ManageChannels)){
      permissions.push("Manage Channels");
  }
- 
- if(user.permissions.has("MENTION_EVERYONE")){
+
+ if(user.permissions.has(PermissionsBitField.Flags.MentionEveryone)){
      permissions.push("Mention Everyone");
  }
 
- if(user.permissions.has("MANAGE_NICKNAMES")){
+ if(user.permissions.has(PermissionsBitField.Flags.ManageNicknames)){
      permissions.push("Manage Nicknames");
  }
 
- if(user.permissions.has("MANAGE_ROLES")){
+ if(user.permissions.has(PermissionsBitField.Flags.ManageRoles)){
      permissions.push("Manage Roles");
  }
 
- if(user.permissions.has("MANAGE_WEBHOOKS")){
+ if(user.permissions.has(PermissionsBitField.Flags.ManageWebhooks)){
      permissions.push("Manage Webhooks");
  }
 
- if(user.permissions.has("MANAGE_EMOJIS_AND_STICKERS")){
+ if(user.permissions.has(PermissionsBitField.Flags.ManageGuildExpressions)){
      permissions.push("Manage Emojis");
  }
 
@@ -112,7 +112,7 @@ const pseudo = user.user.displayName ? `(${user.user.displayName})` : "";
 
     const permission = permissions.join(', ') ? `**Quyền:** ${permissions.join(', ')}` : "\n";
 
-    const Reponse = new MessageEmbed()
+    const Reponse = new EmbedBuilder()
     .setAuthor({ name: `Thông tin về ${user.user.username}`, iconURL: `${user.user.displayAvatarURL({ dynamic: true, size: 1024 })}`})
     .setThumbnail(user.user.displayAvatarURL({ size: 2048, dynamic: true}))
     .setImage(bannerUrl)
@@ -149,20 +149,21 @@ const pseudo = user.user.displayName ? `(${user.user.displayName})` : "";
     .setTimestamp()   
     .setFooter({ text: `Yêu cầu bởi ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true })})
 
-        const row = new MessageActionRow()
-        
-                .addComponents(
-                    new MessageButton()
-                        .setLabel('Avatar')
-                        .setStyle('LINK')
-                        .setURL(user.user.displayAvatarURL({ size: 2048, dynamic: true }))
-                      )
-                      if(bannerUrl) { row.addComponents(
-                      new MessageButton()
-                      .setLabel('Banner')
-                      .setStyle('LINK')
-                      .setURL(`${bannerUrl}`)
-                      )}
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setLabel('Avatar')
+                .setStyle(ButtonStyle.Link)
+                .setURL(user.user.displayAvatarURL({ size: 2048, dynamic: true }))
+        );
+
+        if (bannerUrl) {
+            row.addComponents(
+                new ButtonBuilder()
+                    .setLabel('Banner')
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(bannerUrl)
+            );
+        }
 
     message.reply({ embeds: [Reponse], components: [row] });
     

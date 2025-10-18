@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
         }
 
         let robber = message.author;
-        let searchEmbed = new MessageEmbed()
+        let searchEmbed = new EmbedBuilder()
             .setColor("BLURPLE")
             .setAuthor({name: 'Đợi xíu nha, đừng có mà bựa ...', iconURL: `${client.user.displayAvatarURL({ size: 1024, dynamic: true })}`})
         
@@ -24,7 +24,7 @@ module.exports = {
 
         const url = await fetch(`https://nekos.life/api/v2/img/cuddle`)
         const data = await url.json().then(data => {
-            const noData = new MessageEmbed()
+            const noData = new EmbedBuilder()
                 .setColor('BLURPLE')
                 .setDescription(`Có lỗi xảy ra trong quá trình tìm ảnh`)
             
@@ -32,7 +32,7 @@ module.exports = {
                 return searching.edit({embeds: [noData]})
             }
 
-            const imageEmbed = new MessageEmbed()
+            const imageEmbed = new EmbedBuilder()
                 .setColor("GREEN")
                 .setAuthor({name: 'Reaction: Cuddle', iconURL: `${client.user.displayAvatarURL({ size: 1024, dynamic: true })}`})
                 .setDescription(`${message.member.displayName} đã ôm ấp ${member.displayName}`)

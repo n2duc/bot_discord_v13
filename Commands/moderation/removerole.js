@@ -1,3 +1,5 @@
+const { PermissionsBitField } = require('discord.js');
+
 module.exports = {
     name: "removerol",
     aliases: ["roleremove", "rr"],
@@ -9,7 +11,7 @@ module.exports = {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
         if (!args[0]) return message.reply("Bạn phải tag ai đó")
-        if (!message.member.permissions.has('MANAGE_ROLES')) return message.reply("Bạn không có quyền `\ MANAGE_ROLES `\ ")
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return message.reply("Bạn không có quyền `\ MANAGE_ROLES `\ ")
         if (!user) return message.reply("Không tìm thấy người bạn tag, vui lòng thử lại.")
         
         let search = args.slice(1).join(' ')

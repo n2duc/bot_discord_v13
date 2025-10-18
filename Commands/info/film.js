@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const fetch = require('node-fetch')
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     usage: '<Tên bộ phim>', 
 
     run: async(client, message, args) => {
-        const searchEmbed = new MessageEmbed()
+        const searchEmbed = new EmbedBuilder()
         .setColor('GREEN')
         .setAuthor({name:'Đang tìm kiếm, vui lòng đợi...', iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
         let searching = await message.channel.send({embeds: [searchEmbed]})
@@ -18,12 +18,12 @@ module.exports = {
 
         const res = await fetch(`https://api.popcat.xyz/translate?to=vi&text=${data.plot}`)
         const data1 = await res.json()
-            const noData = new MessageEmbed()
+            const noData = new EmbedBuilder()
             .setColor('RED')
             .setDescription(`Có lỗi xảy ra trong quá trình tìm!`)
             if(!data) return searching.edit({embeds : [noData]})
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
             .setColor('GREEN')
             .setDescription(` Thông tin về bộ phim **${data.title}**`)
 

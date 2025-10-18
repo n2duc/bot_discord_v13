@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const fetch = require('node-fetch');
 module.exports = {
     name: 'github',
@@ -7,7 +7,7 @@ module.exports = {
     usage: '[tên tài khoản]',
     descriptions: 'Hiển thị thông tin tài khoản Github',
     run: async (client, message, args) => {
-        let searchEmbed = new MessageEmbed()
+        let searchEmbed = new EmbedBuilder()
         .setColor('GREEN')
         .setAuthor({name:'Đang tìm kiếm, vui lòng đợi...', iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
         let searching = await message.channel.send({embeds: [searchEmbed]})
@@ -15,12 +15,12 @@ module.exports = {
         const data = await url.json()
         .then(data=> {
 
-            const noData = new MessageEmbed()
+            const noData = new EmbedBuilder()
             .setColor('RED')
             .setDescription(`Có lỗi xảy ra trong quá trình tìm!`)
             if(!data) return searching.edit({embeds : [noData]})
 
-            const imageEmbed = new MessageEmbed()
+            const imageEmbed = new EmbedBuilder()
             .setColor('GREEN')
             .setTitle(`Github Infomation \`${data.name}\``)
             .addFields(

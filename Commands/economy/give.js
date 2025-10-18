@@ -1,4 +1,4 @@
-const { Client, Message, MessageEmbed } = require('discord.js');
+const { Client, Message, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'give',
@@ -22,7 +22,7 @@ module.exports = {
 
         await client.rmv(message.author.id, convertedGive);
         await client.bank(user.id, convertedGive);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('CHUYỂN TIỀN')
             .setColor('#b9fbc0')
             .setDescription(`✅\**${message.author}\** vửa gửi \**${convertedGive}\** <:money:967037594879807550> cho ${user}`)

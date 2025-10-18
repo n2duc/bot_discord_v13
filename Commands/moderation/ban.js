@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, PermissionsBitField } = require('discord.js');
 const ms = require('ms');
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
     run: async (client, message, args) => {
         if (!args[0]) return message.reply("Vui lòng tag người nào đó để ban")
 
-        if (!message.member.permissions.has('BAN_MEMBERS')) return message.reply('Bạn không có quyền ban người khác!');
+        if (!message.member.permissions.has(PermissionsBitField.Flags.BanMembers)) return message.reply('Bạn không có quyền ban người khác!');
         const toBan = message.mentions.members.first() || message.guild.members.cache.get(args[0])
         if (!toBan) return message.reply('Không tìm thấy người cần ban, vui lòng thử lại.');
         if (toBan.id == message.author.id) return message.reply('Bạn không thể ban chính mình!');
@@ -16,7 +16,7 @@ module.exports = {
         if (message.member.roles.highest.position <= toBan.roles.highest.position) {
             return message.reply("Bạn không thể ban người có role bằng hoặc cao hơn mình !!")
         }
-        if (message.guild.me.roles.highest.position <= toBan.roles.highest.position) {
+        if (message.guild.members.me.roles.highest.position <= toBan.roles.highest.position) {
             return message.reply("Tôi không thể ban người có role bằng hoặc cao hơn mình !!")
         }
         let reason = args.slice(1).join(' ');
@@ -24,22 +24,22 @@ module.exports = {
             reason = "Không có lý do."
         }
 
-        const row = new MessageActionRow().addComponents(
-            new MessageButton()
-                .setStyle('DANGER')
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setStyle(ButtonStyle.Danger)
                 .setCustomId('kickyes')
                 .setLabel('Yes'),
-            new MessageButton()
-                .setStyle('PRIMARY')
+            new ButtonBuilder()
+                .setStyle(ButtonStyle.Primary)
                 .setCustomId('kickno')
                 .setLabel('No')
         )
 
-        let kickAskEmbed = new MessageEmbed()
+        let kickAskEmbed = new EmbedBuilder()
             .setColor("RED")
             .setDescription('**🛑 - Bạn thực sự muốn ban người này !**')
 
-        let kickEmbed = new MessageEmbed()
+        let kickEmbed = new EmbedBuilder()
             .setColor('RED')
             .setTitle('🛑 Lệnh BAN')
             .setThumbnail(toBan.user.displayAvatarURL({dynamic: true}))
@@ -47,13 +47,13 @@ module.exports = {
             **- Người ban:** ${message.member} (${message.member.id})
             **- Lý do:** ${reason}`)
             .setTimestamp()
-        let kickEmbed2 = new MessageEmbed()
+        let kickEmbed2 = new EmbedBuilder()
             .setColor('RED')
             .setDescription(`Đã hủy **ban** đối với ${toBan}!`)
 
         const kickPage = await message.reply({ embeds: [kickAskEmbed], components: [row]})
         const col = await kickPage.createMessageComponentCollector({
-            componentType: "BUTTON",
+            componentType: ComponentType.Button,
             time: ms('10s')
         })
         

@@ -1,3 +1,5 @@
+const { PermissionsBitField } = require('discord.js');
+
 module.exports = {
     name: 'say',
     category: 'fun',
@@ -7,7 +9,7 @@ module.exports = {
         let msg;
         let textchannel = message.mentions.channels.first()
 
-        if (!message.member.permissions.has('MANAGE_MESSAGES')) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
             return message.reply({ content: '**Bạn không có quyền sử dụng lệnh này**' })
         } else if (!args[0]) {
             return message.reply({ content: '**Ghi vài chữ mới được chứ địt mẹ ?**' })
