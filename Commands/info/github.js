@@ -1,5 +1,6 @@
-const {MessageEmbed} = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch');
+
 module.exports = {
     name: 'github',
     category: 'info',
@@ -7,46 +8,79 @@ module.exports = {
     usage: '[tên tài khoản]',
     descriptions: 'Hiển thị thông tin tài khoản Github',
     run: async (client, message, args) => {
-        let searchEmbed = new MessageEmbed()
-        .setColor('GREEN')
-        .setAuthor({name:'Đang tìm kiếm, vui lòng đợi...', iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
-        let searching = await message.channel.send({embeds: [searchEmbed]})
-        const url = await fetch(`https://api.github.com/users/${encodeURIComponent(args.join(' '))}`)
-        const data = await url.json()
-        .then(data=> {
+        if (!args.length) {
+            return message.reply('Vui lòng cung cấp tên tài khoản GitHub cần tìm.');
+        }
 
-            const noData = new MessageEmbed()
-            .setColor('RED')
-            .setDescription(`Có lỗi xảy ra trong quá trình tìm!`)
-            if(!data) return searching.edit({embeds : [noData]})
+        const username = args[0];
+        const searchingEmbed = new EmbedBuilder()
+            .setColor('Green')
+            .setAuthor({
+                name: 'Đang tìm kiếm, vui lòng đợi...',
+                iconURL: client.user.displayAvatarURL({ size: 256 })
+            });
 
-            const imageEmbed = new MessageEmbed()
-            .setColor('GREEN')
-            .setTitle(`Github Infomation \`${data.name}\``)
-            .addFields(
-                { name: "**Tên Github:**", value: `\`${data.login}\``, inline: true},
-                { name: "**Tên:**", value: `\`${data.login}\``, inline: true},
-                { name: "**ID:**", value: `\`${data.id}\``, inline: true}
-            )
-            .addFields(
-                { name: "**Tài khoản:**", value:`\`${data.type}\``, inline: true},
-                { name: "**Địa điểm:**", value: `\`${data.location}\``, inline: true},
-                { name: "**Email:**", value: `\`${data.email}\``, inline: true}
-            )
-            .addFields(
-                { name: "**Bio:**", value:`\`${data.bio}\``, inline: true},
-                { name: "**Số Repo mở:**", value:`\`${data.public_repos}\``, inline: true},
-                { name: "**Người theo dõi:**", value:`\`${data.followers}\``, inline: true},
-            )
-            .addFields(
-                { name: "**Đang theo dõi::**", value:`\`${data.following}\``, inline: true},
-                { name: "**Tham gia:**", value: `\`${data.created_at}\``, inline: true}
-            )
-            .setThumbnail(data.avatar_url)
-            .setTimestamp()
-            .setFooter({text: message.member.displayName, iconURL: message.author.displayAvatarURL({ dynamic: true })})
-            
-            return searching.edit({ embeds: [imageEmbed] })
-        })
+        const statusMessage = await message.channel.send({ embeds: [searchingEmbed] });
+
+        try {
+            const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
+
+            if (!response.ok) {
+                const errorEmbed = new EmbedBuilder()
+                    .setColor('Red')
+                    .setDescription(response.status === 404
+                        ? `Không tìm thấy tài khoản GitHub với tên \`${username}\`.`
+                        : 'Không thể truy cập dữ liệu từ GitHub lúc này.');
+
+                return statusMessage.edit({ embeds: [errorEmbed] });
+            }
+
+            const data = await response.json();
+
+            const infoEmbed = new EmbedBuilder()
+                .setColor('Green')
+                .setAuthor({
+                    name: data.name || data.login,
+                    iconURL: data.avatar_url,
+                    url: data.html_url
+                })
+                .setTitle('Thông tin tài khoản GitHub')
+                .setURL(data.html_url)
+                .setThumbnail(data.avatar_url)
+                .addFields(
+                    { name: 'Tên người dùng', value: `\`${data.login}\``, inline: true },
+                    { name: 'Tên hiển thị', value: `\`${data.name || 'Không có'}\``, inline: true },
+                    { name: 'ID', value: `\`${data.id}\``, inline: true }
+                )
+                .addFields(
+                    { name: 'Loại tài khoản', value: `\`${data.type}\``, inline: true },
+                    { name: 'Tổ chức/Công ty', value: `\`${data.company || 'Không có'}\``, inline: true },
+                    { name: 'Địa điểm', value: `\`${data.location || 'Không rõ'}\``, inline: true }
+                )
+                .addFields(
+                    { name: 'Email', value: `\`${data.email || 'Không công khai'}\``, inline: true },
+                    { name: 'Blog', value: data.blog ? `[Liên kết](${data.blog})` : 'Không có', inline: true },
+                    { name: 'Bio', value: data.bio ? data.bio : 'Không có', inline: false }
+                )
+                .addFields(
+                    { name: 'Public repos', value: `\`${data.public_repos}\``, inline: true },
+                    { name: 'Followers', value: `\`${data.followers}\``, inline: true },
+                    { name: 'Đang theo dõi', value: `\`${data.following}\``, inline: true }
+                )
+                .addFields({
+                    name: 'Tham gia từ',
+                    value: `\`${new Date(data.created_at).toLocaleDateString('vi-VN')}\``,
+                    inline: true
+                })
+                .setTimestamp();
+
+            return statusMessage.edit({ embeds: [infoEmbed] });
+        } catch (error) {
+            const errorEmbed = new EmbedBuilder()
+                .setColor('Red')
+                .setDescription('Có lỗi xảy ra trong quá trình tìm kiếm. Vui lòng thử lại sau.');
+
+            return statusMessage.edit({ embeds: [errorEmbed] });
+        }
     }
-}
+};

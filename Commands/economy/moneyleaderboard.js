@@ -1,4 +1,4 @@
-const { Client, Message, MessageEmbed, Collection } = require('discord.js');
+const { Client, Message, EmbedBuilder, Collection } = require('discord.js');
 
 module.exports = {
     name: 'moneyleaderboard',
@@ -23,7 +23,7 @@ module.exports = {
         let lb = await data.map((v, i) => {
             return `\`#${i+1}\`| ${client.users.cache.get(v.id).tag} - \**${v.bal}\** <:money:967037594879807550>`;
         })
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({ name: `Bảng xếp hạng PH Money - ${client.user.username}`, iconURL: message.guild.iconURL({ dynamic: true }) })
             .setColor('#b9fbc0')
             .setDescription(lb.join("\n"))

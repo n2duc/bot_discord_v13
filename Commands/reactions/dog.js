@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: "dog",
@@ -17,7 +17,7 @@ module.exports = {
             return message.channel.send(`Lỗi !! Vui lòng thử lại`)
         }
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('RANDOM')
             .setImage(image.link)
 

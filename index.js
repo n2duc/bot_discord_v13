@@ -1,5 +1,11 @@
 require('dotenv').config();
-const Discord = require('discord.js');
+const {
+    Client,
+    Collection,
+    GatewayIntentBits,
+    Partials,
+    EmbedBuilder
+} = require('discord.js');
 // const axios = require('axios');
 // const fetch = require('node-fetch');
 // const prefix = process.env.PREFIX
@@ -12,12 +18,20 @@ const generateImage = require("./generateImage")
 const ms = require('ms');
 const guildInvites = new Map();
 
-const client = new Discord.Client({
-    intents: ['DIRECT_MESSAGES', 'GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_WEBHOOKS'],
-    partials: ['CHANNEL', 'MESSAGE'],
-    allowedMentions: ["users"]
+const client = new Client({
+    intents: [
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildWebhooks,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.MessageContent
+    ],
+    partials: [Partials.Channel, Partials.Message],
+    allowedMentions: { parse: ['users'] }
 });
-Discord.Intents.FLAGS
 
 
 mongo.connect(process.env.MONGODB_SRV, {
@@ -29,16 +43,24 @@ mongo.connect(process.env.MONGODB_SRV, {
     console.log(err)
 })
 
-client.commands = new Discord.Collection();
-client.interactions = new Discord.Collection();
-client.aliases = new Discord.Collection();
-client.categories = new Discord.Collection();
-client.cooldowns = new Discord.Collection();
+client.commands = new Collection();
+client.interactions = new Collection();
+client.aliases = new Collection();
+client.categories = new Collection();
+client.cooldowns = new Collection();
 
 ['command', 'event', 'slashCommand'].forEach(handler => require(`./handlers/${handler}`)(client));
 
 client.snipes = new Map();
-client.on('messageDelete', async function(message, channel) {
+client.on('messageDelete', async function(message) {
+    if (message.partial) {
+        try {
+            await message.fetch();
+        } catch (err) {
+            return;
+        }
+    }
+
     client.snipes.set(message.channel.id, {
         content: message.content,
         author: message.author,
@@ -60,11 +82,13 @@ client.on('ready', () => {
 client.on('inviteCreate',  async( invites ) => {
     const channel = invites.guild.channels.cache.get('1018547855331426354');
     if (channel) {
-        const embed = new Discord.MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`Có link invite mới được tạo!`)
-            .addFields('Người tạo', invites.inviter.tag)
-            .addFields('Số lượng: ', invites.maxUses == 0 ? "Không giới hạn" : invites.maxUses)
-            .addFields('Thời hạn của link: ', invites.maxAge == 0 ? "Không giới hạn" : ms(invites.maxAge, { long: true }))
+            .addFields(
+                { name: 'Người tạo', value: invites.inviter.tag },
+                { name: 'Số lượng', value: invites.maxUses === 0 ? "Không giới hạn" : String(invites.maxUses) },
+                { name: 'Thời hạn của link', value: invites.maxAge === 0 ? "Không giới hạn" : ms(invites.maxAge, { long: true }) }
+            )
             .setFooter({text: `ID: ${invites.inviter.id}`})
             .setTimestamp()
         channel.send({embeds: [embed]})
@@ -74,8 +98,22 @@ client.on('inviteCreate',  async( invites ) => {
 
 
 
-client.esnipes = new Discord.Collection();
+client.esnipes = new Collection();
 client.on('messageUpdate', async(oldMes, newMes) => {
+    if (oldMes.partial) {
+        try {
+            await oldMes.fetch();
+        } catch (err) {
+            return;
+        }
+    }
+    if (newMes.partial) {
+        try {
+            await newMes.fetch();
+        } catch (err) {
+            return;
+        }
+    }
     const esnipes = client.esnipes.get(oldMes.channel.id) || [];
     if (esnipes.length > 5) esnipes == esnipes.slice(0, 4)
     esnipes.unshift({

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
     name: 'snipe',
@@ -9,7 +9,7 @@ module.exports = {
         const msg = client.snipes.get(message.channel.id) || [];
         if (!msg) return message.channel.send('Không tìm thấy tin nhắn nào!')
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({ name: `Người gửi:${msg.author.tag}`, iconURL: msg.author.avatarURL({ dynamic: true }) })
             .setColor('GREEN')
             .setDescription(msg.content)

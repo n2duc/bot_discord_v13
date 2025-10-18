@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js")
+const { EmbedBuilder } = require("discord.js")
 
 module.exports = {
   name: "first-message",
@@ -10,7 +10,7 @@ module.exports = {
     const fetchmessages = await message.channel.messages.fetch({ limit: 1, after: 1 })
     const msg = fetchmessages.first()
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setDescription(`
       **Nội dung:** \`${msg.content}\`
       **Gửi bởi:** ${msg.author}

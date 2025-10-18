@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const ms = require('ms')
-const Discord = require('discord.js')
+const { EmbedBuilder, PermissionsBitField } = require('discord.js')
 module.exports = {
     name: 'timeout',
     aliases: ['tm', 'mute'],
@@ -15,7 +15,7 @@ module.exports = {
         let member = message.mentions.members.first() ||
             message.guild.members.cache.find(m => m.user.tag === args[0]) || message.guild.members.cache.find((m) => m.user.username === args[0]) || message.guild.members.cache.find((m) => m.user.id === args[0]);
         let content = args.slice(1).join(" ")
-        if (!message.member.permissions.has('BAN_MEMBERS')) return message.channel.send('**Bạn không có quyền để thực hiện lệnh này !! Bựa**')
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) return message.channel.send('**Bạn không có quyền để thực hiện lệnh này !! Bựa**')
         else if (member.roles.highest.position >= message.member.roles.highest.position) return message.channel.send('**Bạn không thể timeout người có \`ROLE\` cao hơn bạn !! Bựa**')
         else {
             if (!member) return message.channel.send('**Vui lòng tag một ai để để timeout !!**')
@@ -42,8 +42,8 @@ module.exports = {
                     headers: { "Authorization": "Bot " + client.token, "Content-Type": "application/json" },
                     body: JSON.stringify({ 'communication_disabled_until': `${newdate}` }),
                 }).then(m => {
-                    message.channel.send({ embeds: 
-                                            [new Discord.MessageEmbed()
+                    message.channel.send({ embeds:
+                                            [new EmbedBuilder()
                                                 .setTitle(`Set timeout`)
                                                 .setDescription(`**User:** ${member.user.tag}\n**Bởi:** ${message.author.tag}\n**Time:** ${ms(timee)}`)
                                                 .setColor('RED')

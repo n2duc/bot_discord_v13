@@ -1,4 +1,4 @@
-const { Client, Message, MessageEmbed } = require('discord.js');
+const { Client, Message, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'cash',
@@ -9,7 +9,7 @@ module.exports = {
         const member = message.mentions.members.first() || message.member;
 
         const bal = await client.bal(message.member.id);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle('Tiền của bạn:')
             .setColor('#b9fbc0')
             .setDescription(`\**${member.displayName}\** đang có **${bal}** <:money:967037594879807550>`)

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
         if(member.id === message.author.id) return message.reply ("Bạn có thể xoa đầu chính mình... ở ngoài đời");
         let robber = message.author;
         
-        let searchEmbed = new MessageEmbed()
+        let searchEmbed = new EmbedBuilder()
             .setColor('GREEN')
             .setAuthor({name: 'Đợi xíu nha, đừng có mà bựa ...', iconURL: `${client.user.displayAvatarURL({ size: 1024, dynamic: true })}`})
         let searching = await message.channel.send({embeds: [searchEmbed]})
@@ -21,13 +21,13 @@ module.exports = {
         const data = await url.json()
         .then(data=> {
 
-            const noData = new MessageEmbed()
+            const noData = new EmbedBuilder()
             .setColor('RED')
             .setDescription(`Có lỗi xảy ra trong quá trình tìm ảnh!`)
             if(!data) return searching.edit({embeds : [noData]})
 
 
-            const imageEmbed = new MessageEmbed()
+            const imageEmbed = new EmbedBuilder()
             .setColor('GREEN')
             .setAuthor({name: 'Reaction: Pat', iconURL: `${client.user.displayAvatarURL({ size: 1024, dynamic: true })}`})
             .setDescription(`${message.member.displayName} đã dành một cái xoa đầu cho ${member.displayName}`)

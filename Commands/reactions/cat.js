@@ -1,4 +1,4 @@
-const { Client, MessageEmbed } = require('discord.js')
+const { Client, EmbedBuilder } = require('discord.js')
 const axios = require("axios");
 module.exports = {
   name: "cat",
@@ -15,7 +15,7 @@ module.exports = {
     } catch (e) {
       return message.channel.send('Lỗi !! Vui lòng thử lại')
     }
-    const e = new MessageEmbed()
+    const e = new EmbedBuilder()
     .setColor('RANDOM')
     .setImage(data.file)
     message.channel.send({embeds: [e]})

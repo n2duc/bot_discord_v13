@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
+const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require("discord.js");
 module.exports = {
     name: 'invite',
     aliases: ['invite', 'inv'],
@@ -7,7 +7,7 @@ module.exports = {
 
     run: async(client, message) => {
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor("BLUE")
             .setTimestamp()
             .setThumbnail(client.user.displayAvatarURL())

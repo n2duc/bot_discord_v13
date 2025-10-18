@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
     name: 'love',
@@ -9,7 +9,7 @@ module.exports = {
     descriptions: 'Xem bạn và người ấy có hợp nhau hay không !',
     run: async(client, message, args) => {
         if (!message.mentions.members.first()) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#ff87ab')
                 .setDescription(`**💝 Vui lòng tag một người nào đó!**`);
             return message.channel.send({ embeds: [embed] });
@@ -20,7 +20,7 @@ module.exports = {
         const love = Math.floor(Math.random() * 100);
         const loveIndex = Math.floor(love / 10);
         const loveLevel = '💖'.repeat(loveIndex) + '💔'.repeat(10 - loveIndex);
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#ff87ab')
             .addFields({name: `☁️ **${person.displayName}** yêu **${message.member.displayName}** ở mức:`, 
             value:`💟 ${Math.floor(love)}%\n\n${loveLevel}`});

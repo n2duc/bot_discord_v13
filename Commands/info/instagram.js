@@ -1,6 +1,6 @@
 
 const axios = require('axios')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const { stripIndent } = require('common-tags')
 
 module.exports = {
@@ -16,18 +16,21 @@ module.exports = {
         try {
             res = await axios.get(url, { headers: { cookie: process.env.INSTAGRAM_COOKIE }})
             const account = res.data.graphql.user;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('BLURPLE')
                 .setTitle(account.full_name)
                 .setURL(`https://www.instagram.com/${instagram_id}/`)
                 .setThumbnail(account.profile_pic_url_hd)
-                .addFields("Thông tin cá nhân", stripIndent `**- Tên người dùng:** ${account.username}
+                .addFields({
+                    name: "Thông tin cá nhân",
+                    value: stripIndent`**- Tên người dùng:** ${account.username}
                 **- Tên đầy đủ: ** ${account.full_name}
                 **- Bio:** ${account.biography.length == 0 ? "Không có" : account.biography}
                 **- Số bài đăng:** ${account.edge_owner_to_timeline_media.count}
                 **- Followers:** ${account.edge_followed_by.count}
                 **- Following:** ${account.edge_follow.count}
-                **- Private?:** ${account.is_private ? "Có 🔐" : "Không 🔓"}`)
+                **- Private?:** ${account.is_private ? "Có 🔐" : "Không 🔓"}`
+                })
                 .setFooter({ text: `Yêu cầu bởi ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) });
     
             message.channel.send({ embeds: [embed] });

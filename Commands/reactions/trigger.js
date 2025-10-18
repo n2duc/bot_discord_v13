@@ -1,5 +1,5 @@
 const { Canvas } = require('canvacord');
-const { MessageAttachment } = require('discord.js')
+const { AttachmentBuilder } = require('discord.js')
 
 module.exports = {
     name: "trigger",
@@ -11,7 +11,7 @@ module.exports = {
         const avatar = user.displayAvatarURL({ dynamic: false, format: 'png' })
         const image = await Canvas.trigger(avatar)
 
-        const attachment = new MessageAttachment(image, "trigger.gif")
+        const attachment = new AttachmentBuilder(image, { name: "trigger.gif" })
 
         message.channel.send({ files: [attachment]})
     }
